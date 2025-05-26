@@ -10,7 +10,7 @@ Este é um projeto de API REST com autenticação de usuários e gerenciamento d
 
 ## Configuração
 
-1. Clone o repositório
+1. Clone o repositório.
 2. Instale as dependências:
 ```bash
 npm install
