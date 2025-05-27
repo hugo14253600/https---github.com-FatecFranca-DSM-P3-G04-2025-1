@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galeria - Caderno Digital</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    .sidebar {
+      height: 100vh;
+      width: 200px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #0b0831;
+      color: white;
+      padding-top: 20px;
+      transition: transform 0.3s ease;
+      z-index: 999;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 15px;
+      font-family: 'Trebuchet MS', sans-serif;
+      font-size: 1.2em;
+      text-decoration: none;
+    }
+
+    .sidebar a:hover {
+      background-color: #575757;
+    }
+
+    .content {
+      margin-left: 200px;
+      padding: 20px;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #0a192f;
+      margin-bottom: 30px;
+      text-align: center;
+      font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+
+    .galeria-container {
+      margin-bottom: 30px;
+    }
+
+    .grupo-container {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .grupo-titulo {
+      font-size: 1.3em;
+      color: #0b0831;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .galeria-grupo {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+
+    .galeria-item {
+      background-color: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .galeria-imagem {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .galeria-titulo {
+      font-size: 1.1em;
+      color: #0b0831;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .galeria-data {
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .toggle-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #333;
+      border-radius: 8px;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      display: none;
+      z-index: 1000;
+    }
+
+    #logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px auto;
+    }
+
+    #logo img {
+      width: 120px;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    .sem-imagens {
+      text-align: center;
+      color: #666;
+      padding: 40px;
+      font-size: 1.2em;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .content {
+        margin-left: 0;
+        padding-top: 80px;
+      }
+
+      .toggle-btn {
+        display: block;
+      }
+
+      #logo {
+        margin-top: 70px;
+      }
+
+      .galeria-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="toggle-btn" onclick="toggleSidebar()">☰ Menu</button>
+
+  <div class="sidebar" id="sidebar">
+    <div id="logo">
+      <img src="/views/img/img5.jpg" alt="Serafim">
+    </div>
+    <a href="/sobre">Sobre</a>
+    <a href="/dicas">Dicas</a>
+    <a href="/anotacoes">Anotações</a>
+    <a href="/galeria">Galeria</a>
+  </div>
+
+  <div class="content">
+    <main>
+      <h1>🖼️ Galeria de Imagens</h1>
+      <div id="galeriaContainer">
+        <!-- As imagens serão organizadas por grupo aqui -->
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Função para carregar apenas as anotações com imagens
+    async function carregarGaleria() {
+      try {
+        const response = await fetch('/api/anotacoes');
+        const data = await response.json();
+
+        if (response.ok) {
+          const container = document.getElementById('galeriaContainer');
+          container.innerHTML = ''; // Limpa o container
+
+          // Filtra apenas anotações com imagens e agrupa por grupo
+          const grupos = {};
+          data.forEach(anotacao => {
+            if (anotacao.midia) {
+              if (!grupos[anotacao.grupo]) {
+                grupos[anotacao.grupo] = [];
+              }
+              grupos[anotacao.grupo].push(anotacao);
+            }
+          });
+
+          if (Object.keys(grupos).length === 0) {
+            container.innerHTML = '<div class="sem-imagens">Nenhuma imagem encontrada</div>';
+            return;
+          }
+
+          // Cria containers para cada grupo
+          Object.entries(grupos).forEach(([nomeGrupo, anotacoes]) => {
+            const grupoContainer = document.createElement('div');
+            grupoContainer.className = 'grupo-container';
+            
+            grupoContainer.innerHTML = `
+              <div class="grupo-titulo">${nomeGrupo}</div>
+              <div class="galeria-grupo">
+                ${anotacoes.map(anotacao => `
+                  <div class="galeria-item">
+                    <img src="/uploads/${anotacao.midia}" 
+                         alt="${anotacao.titulo}" 
+                         class="galeria-imagem">
+                    <div class="galeria-titulo">${anotacao.titulo}</div>
+                    <div class="galeria-data">
+                      ${new Date(anotacao.criadoEm).toLocaleDateString('pt-BR')}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            `;
+
+            container.appendChild(grupoContainer);
+          });
+        } else {
+          console.error('Erro ao carregar imagens:', data.erro);
+        }
+      } catch (erro) {
+        console.error('Erro ao conectar com o servidor:', erro);
+      }
+    }
+
+    // Carrega a galeria quando a página é aberta
+    carregarGaleria();
+
+    // Funções do menu lateral
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.querySelector('.toggle-btn');
+
+    function toggleSidebar() {
+      sidebar.classList.toggle('active');
+
+      if (sidebar.classList.contains('active')) {
+        toggleBtn.style.display = 'none';
+        document.addEventListener('click', handleOutsideClick);
+      } else {
+        toggleBtn.style.display = 'block';
+        document.removeEventListener('click', handleOutsideClick);
+      }
+    }
+
+    function handleOutsideClick(e) {
+      const isClickInsideSidebar = sidebar.contains(e.target);
+      const isClickOnButton = toggleBtn.contains(e.target);
+
+      if (!isClickInsideSidebar && !isClickOnButton) {
+        sidebar.classList.remove('active');
+        toggleBtn.style.display = 'block';
+        document.removeEventListener('click', handleOutsideClick);
+      }
+    }
+  </script>
+</body>
+</html> 

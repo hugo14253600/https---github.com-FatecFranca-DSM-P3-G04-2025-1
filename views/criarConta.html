@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tela de Login</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Roboto&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    h1, h2 {
+      font-family: 'Merriweather', serif;
+    }
+
+    .login-container {
+      background-color: white;
+      padding: 40px 30px;
+      color: #333;
+      text-align: center;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 400px;
+      margin: 20px auto; /* margem reduzida para aproximar do logo */
+    }
+
+    .login-container h2 {
+      text-align: center;
+      font-size: 25px;
+      margin-bottom: 25px;
+      color: black;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+      margin-left: 10px; /* reduzido para manter alinhamento */
+       /* centraliza labels e inputs */
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 90%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f0f8ff;
+      font-size: 15px;
+      margin: 0 auto;
+    }
+
+    .btn {
+      width: 97%;
+      padding: 12px;
+      background-color: #0a192f;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 30px;
+    }
+
+    .btn:hover {
+      background-color: #093252;
+    }
+
+    .alert {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 12px;
+      border: 1px solid #f5c6cb;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      text-align: center;
+      display: none;
+    }
+
+    #logo {
+      text-align: center;
+      margin-top: 10px; /* margem reduzida */
+      color: #0a192f;
+      margin-bottom: -50px; /* DISTANCIA DO TEXTO ABAIXO */
+      
+    }
+
+    #h1 {
+      font-size: 15px;
+      margin: 0;
+      color: #0a192f;
+      font-family: 'Merriweather', serif;
+      text-align: center;
+      margin-top: 20px; /* margem reduzida */
+      margin-bottom: -30px; /* margem reduzida */
+    } 
+    #logo img {
+      width: 120px;
+      height: auto;
+    }
+    
+    .link {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .link a {
+      color: #1b7264;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .link a:hover {
+      text-decoration: underline;
+    }
+
+
+    footer {
+      background-color: #0a192f;
+      color: #f5f5f5;
+      text-align: center;
+      padding: 15px 0;
+      margin-top: auto;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="logo">
+    <img src="/views/img/img5.jpg" alt="Logo do Caderno Digital">
+  </div>
+  <div id="h1">
+    <h1>Caderno Digital</h1>
+  </div>
+  <div class="login-container">
+    <h2>Registre seus Dados</h2>
+
+    <form id="registroForm" onsubmit="handleRegistro(event)">
+      <div class="alert" id="mensagemErro" style="display: none;"></div>
+
+      <div class="form-group">
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required>
+      </div>
+      <div class="form-group">
+        <label for="nascimento">Nascimento</label>
+        <input type="date" id="nascimento" name="nascimento" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Digite seu email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
+      </div>
+      <div class="form-group">
+        <label for="senha2">Confirme sua Senha</label>
+        <input type="password" id="senha2" name="senha2" placeholder="Digite sua senha novamente" required>
+      </div>
+
+      <button type="submit" class="btn">Cadastrar</button>
+
+      <div class="link">
+        <p>Já tem uma conta? <a href="/">Fazer login</a></p>
+      </div>
+    </form>
+  </div>
+  <footer>
+    &copy; 2025 Caderno Digital — Todos os direitos reservados.
+  </footer>
+
+  <script>
+    async function handleRegistro(event) {
+      event.preventDefault();
+      
+      const nome = document.getElementById('nome').value;
+      const nascimento = document.getElementById('nascimento').value;
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+      const senha2 = document.getElementById('senha2').value;
+      const mensagemErro = document.getElementById('mensagemErro');
+
+      try {
+        const response = await fetch('/api/usuarios/registrar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nome, nascimento, email, senha, senha2 })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Registro bem sucedido, redireciona para login
+          window.location.href = '/';
+        } else {
+          // Exibe mensagem de erro
+          mensagemErro.textContent = data.erro || 'Erro ao registrar usuário';
+          mensagemErro.style.display = 'block';
+        }
+      } catch (erro) {
+        mensagemErro.textContent = 'Erro ao conectar com o servidor';
+        mensagemErro.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+

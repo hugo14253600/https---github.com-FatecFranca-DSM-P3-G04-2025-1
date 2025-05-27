@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  nome       String
+  nascimento DateTime
+  email      String   @unique
+  senha      String
+  criadoEm   DateTime @default(now())
+  anotacoes  Anotacao[]
+}
+
+model Dica {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  titulo  String
+  conteudo String
+}
+
+model Anotacao {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  titulo    String
+  conteudo  String
+  midia     String?  // URL da mídia (imagem ou vídeo)
+  tipo      String   // "texto", "imagem" ou "video"
+  grupo     String?  // Nome do grupo/pasta da anotação (agora opcional)
+  criadoEm  DateTime @default(now())
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId String   @db.ObjectId
+}
+
+

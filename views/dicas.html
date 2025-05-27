@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dicas - Caderno Digital</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+
+    .sidebar {
+      height: 100vh;
+      width: 200px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #0b0831;
+      color: white;
+      padding-top: 20px;
+      transition: transform 0.3s ease;
+      z-index: 999;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 15px;
+      font-family: 'Trebuchet MS', sans-serif;
+      font-size: 1.2em;
+      text-decoration: none;
+    }
+
+    .sidebar a:hover {
+      background-color: #575757;
+    }
+
+    .content {
+      margin-left: 200px;
+      padding: 20px;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #0a192f;
+      margin-top: 30px;
+      text-align: center;
+      font-family: Verdana, Geneva, Tahoma, sans-serif
+    }
+
+    h2 {
+      font-size: 1.3em;
+      color: #0b0831;
+      margin-top: 30px;
+      font-family: Verdana, Geneva, Tahoma, sans-serif
+    }
+
+    p {
+      line-height: 1.7;
+      font-size: 1.05em;
+      color: #333;
+      margin-bottom: 20px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .toggle-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #333;
+      border-radius: 8px;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      display: none;
+      z-index: 1000;
+    }
+
+    #logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px auto;
+    }
+
+    #logo img {
+      width: 120px;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .content {
+        margin-left: 0;
+        padding-top: 80px;
+      }
+
+      .toggle-btn {
+        display: block;
+      }
+
+      #logo {
+        margin-top: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="toggle-btn" onclick="toggleSidebar()">☰ Menu</button>
+
+  <div class="sidebar" id="sidebar">
+    <div id="logo">
+      <img src="/views/img/img5.jpg" alt="Serafim">
+    </div>
+    <a href="/sobre">Sobre</a>
+    <a href="/dicas">Dicas</a>
+    <a href="/anotacoes">Anotações</a>
+    <a href="/galeria">Galeria</a>
+  </div>
+
+  <div class="content">
+    <main>
+      <h1> 💭  Dicas para Aproveitar Melhor </h1>
+
+      <h2>Crie lembretes importantes</h2>
+      <p>Use a função de lembretes para não esquecer prazos de provas, entregas de trabalhos ou compromissos escolares. O Caderno Digital te avisa na hora certa.</p>
+
+      <h2>Monte um cronograma de estudos</h2>
+      <p>Planeje seus horários direto na plataforma. Com o cronograma visual, fica mais fácil manter o foco e evitar deixar tudo para última hora.</p>
+
+      <h2>Organize fotos e materiais</h2>
+      <p>Digitalize e salve fotos de quadros, folhas de exercícios e anotações. Assim, tudo estará acessível de forma prática e segura, sem risco de perder.</p>
+
+      <h2>Use categorias para seus conteúdos</h2>
+      <p>Separe seus arquivos por matérias ou temas. O sistema de organização do Caderno Digital te ajuda a encontrar tudo com poucos cliques.</p>
+
+      <h2>Revise com frequência</h2>
+      <p>Aproveite os momentos de pausa para acessar seus resumos ou lembretes no celular. Com o Caderno Digital sempre à mão, fica fácil revisar sem esforço.</p>
+
+      <h2>Personalize seu espaço</h2>
+      <p>Deixe seu caderno digital com a sua cara! Use uma imagem de perfil, escolha uma cor de destaque ou nomeie suas seções de forma criativa.</p>
+
+      <h2>Mantenha a consistência</h2>
+      <p>Acesse a plataforma todos os dias, nem que seja por 5 minutos. Pequenos hábitos constantes fazem toda a diferença no longo prazo.</p>
+    </main>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.querySelector('.toggle-btn');
+
+    function toggleSidebar() {
+      sidebar.classList.toggle('active');
+
+      if (sidebar.classList.contains('active')) {
+        toggleBtn.style.display = 'none';
+        document.addEventListener('click', handleOutsideClick);
+      } else {
+        toggleBtn.style.display = 'block';
+        document.removeEventListener('click', handleOutsideClick);
+      }
+    }
+
+    function handleOutsideClick(e) {
+      const isClickInsideSidebar = sidebar.contains(e.target);
+      const isClickOnButton = toggleBtn.contains(e.target);
+
+      if (!isClickInsideSidebar && !isClickOnButton) {
+        sidebar.classList.remove('active');
+        toggleBtn.style.display = 'block';
+        document.removeEventListener('click', handleOutsideClick);
+      }
+    }
+  </script>
+</body>
+</html>
